@@ -1,0 +1,73 @@
+
+# gets the unique values from a pandas data frame for each column if its level is smaller than the given number 
+def get_unique_values(df, n) : 
+    for i in df.columns:
+        if df[i].dtype == 'object':
+            if len(df[i].unique()) < n:
+                print(len(df[i].unique()),"unique values for", i,":",'\n',df[i].unique(), '\n')
+            elif len(df[i].unique()) >= n:
+                print(len(df[i].unique()),"unique values for", i, "(greater than",n,")",'\n' )
+
+#beside getting the usual summary from describe function , it adds the four more quantiles 5%, 1%,9%, 99% , for a comprehensive view of data at its tails
+def get_whole_summary(df):
+    quantiles = [.05,.1,.9,.99]
+    numeric_cols = []
+    quantiles_names = []
+    quantiles_num = []
+    quantiles_df = []
+    summary = df.describe()
+    for i in df.columns:
+            if df[i].dtype != 'object':
+                numeric_cols.append(i)
+
+    for i in numeric_cols:
+        for j in quantiles:
+            quantiles_names.append(i + "_" + str(j))
+            quantiles_num.append(np.quantile(df[i],j)) 
+
+    quantiles_df = pd.DataFrame(quantiles_num, quantiles_names).reset_index()
+    quantiles_df.columns = ["variable","value"]
+    quantiles_df[[" ","quantile"]] = quantiles_df["variable"].str.rsplit("_",n = 1, expand = True)
+    quantiles_df = quantiles_df.drop(["variable"],1)
+    quantiles_df = quantiles_df.pivot(index="quantile", columns = " ", values = "value").reset_index()
+    sumamrized_df = pd.concat([summary,quantiles_df.set_index("quantile")])
+    sumamrized_df.index = ['count',  'mean',   'std',   'min', '25%',   '50%',   '75%',  'max',"5%",  "10%","90%",    "99%"]
+    index_reorder = ['count',  'mean',   'std',   'min',"5%",  "10%",'25%', '50%',   '75%', "90%",    "99%", 'max']
+    sumamrized_df = sumamrized_df.reindex(index_reorder)
+    return sumamrized_df, numeric_cols
+
+
+#does the chow test where inputs are defined as follows:
+#y1 =  pre-event dependent variable data frame
+#x1 =  pre-event independent variable/s data frame
+#y2 =  post-event dependent variable data frame
+#x2 =  post-event independent variable/s data frame
+
+def chow_f(y1, x1, y2, x2):
+
+    def find_rss (y, x):
+        A = np.vstack([x.T, np.ones(len(x))]).T
+        rss = np.linalg.lstsq(A, y, rcond=None)[1][0]
+        length = len(y)
+        return (rss, length)
+
+
+    rss_total, n_total = find_rss(np.append(y1, y2), pd.concat([x1, x2]))
+    rss_1, n_1 = find_rss(y1, x1)
+    rss_2, n_2 = find_rss(y2, x2)
+
+    df1 = len(x1.columns)+1
+    df2 = (n_1 + n_2) - 2*df1
+    chow_nom = (rss_total - (rss_1 + rss_2)) / df1
+    chow_denom = (rss_1 + rss_2) / df2
+    return chow_nom / chow_denom
+
+
+def chow_p(y1, x1, y2, x2, **kwargs):
+    F = chow_f(y1, x1, y2, x2, **kwargs)
+    if not F:
+        return 1
+    df1 = len(x1.columns)+1
+    df2 = (len(x1) + len(x2)) - 2*(df1)
+    p_val = f.sf(F, df1, df2)
+    return p_val
