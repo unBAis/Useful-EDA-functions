@@ -1,6 +1,15 @@
 import pandas as pd
 import numpy as np
 
+
+#gets the weight of evidence and information value for each column given in the function and return the Dataframe for the same with added information
+# the arguments for the function are defined as follows: 
+#df = data 
+#num_cols = list of numeric/integer columns
+#char_cols = list of character columns
+#quantile_group = an integer for how many groups are intended for numeric/interger columns distribution
+#target = the binary column for which woe needs to be calculated 
+
 def get_woe_df(df, num_cols, char_cols,quantile_group ,target):
     num_lst = []
     char_lst = []
