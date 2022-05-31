@@ -1,0 +1,47 @@
+import pandas as pd
+import numpy as np
+
+
+#beside getting the usual summary from describe function ,
+#it adds the four more quantiles 5%, 1%,9%, 99% , for a comprehensive view of data at its tails
+
+
+
+def get_whole_summary(df):
+    quantiles = [.05,.1,.9,.99]
+    numeric_cols = []
+    quantiles_names = []
+    quantiles_num = []
+    quantiles_df = []
+    summary = df.describe()
+    for i in df.columns:
+            if df[i].dtype != 'object':
+                numeric_cols.append(i)
+
+    for i in numeric_cols:
+        for j in quantiles:
+            quantiles_names.append(i + "_" + str(j))
+            quantiles_num.append(np.quantile(df[i],j)) 
+
+    quantiles_df = pd.DataFrame(quantiles_num, quantiles_names).reset_index()
+    quantiles_df.columns = ["variable","value"]
+    quantiles_df[[" ","quantile"]] = quantiles_df["variable"].str.rsplit("_",n = 1, expand = True)
+    quantiles_df = quantiles_df.drop(["variable"],1)
+    quantiles_df = quantiles_df.pivot(index="quantile", columns = " ", values = "value").reset_index()
+    sumamrized_df = pd.concat([summary,quantiles_df.set_index("quantile")])
+    sumamrized_df.index = ['count',  'mean',   'std',   'min', '25%',   '50%',   '75%',  'max',"5%",  "10%","90%",    "99%"]
+    index_reorder = ['count',  'mean',   'std',   'min',"5%",  "10%",'25%', '50%',   '75%', "90%",    "99%", 'max']
+    sumamrized_df = sumamrized_df.reindex(index_reorder)
+    return sumamrized_df, numeric_cols
+
+
+#gets the weight of evidence and information value for each column given in the function and return the Dataframe for the same with added information
+# the arguments for the function are defined as follows: 
+#df = data 
+#num_cols = list of numeric/integer columns
+#char_cols = list of character columns
+#quantile_group = an integer for how many groups are intended for numeric/interger columns distribution
+#target = the binary column for which woe needs to be calculated 
+
+
+
