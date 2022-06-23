@@ -10,17 +10,19 @@ def get_skew_kurt_for_subset(df, req_col, bot_q = [.01,.03,.05,.10,.13,.15,.20,.
 
     top_q = []
     for i in bot_q:
-    top_q.append(1-i)
+        top_q.append(1-i)
     
-    bot_num_q = []
-    top_num_q = []
-    for i in bot_q:
-        bot_num_q.append(np.quantile(df[col],i))
-    for i in top_q:
-        top_num_q.append(np.quantile(df[col],i))
-
     sk_lst = []
-    for col in req_col:  
+
+    for col in req_col: 
+        
+        bot_num_q = []
+        top_num_q = []
+        for i in bot_q:
+            bot_num_q.append(np.quantile(df[col],i))
+        for i in top_q:
+            top_num_q.append(np.quantile(df[col],i))
+        
         skew_lst = []
         kurt_lst = []
         for i, j in zip(top_num_q,bot_num_q):
@@ -32,7 +34,15 @@ def get_skew_kurt_for_subset(df, req_col, bot_q = [.01,.03,.05,.10,.13,.15,.20,.
         sk_df['tail'] = 'two_tail'
         sk_lst.append(sk_df)
 
-    for col in req_col: 
+    for col in req_col:
+                
+        bot_num_q = []
+        top_num_q = []
+        for i in bot_q:
+            bot_num_q.append(np.quantile(df[col],i))
+        for i in top_q:
+            top_num_q.append(np.quantile(df[col],i))
+         
         skew_lst = []
         kurt_lst = []
         for i in top_num_q:
@@ -46,6 +56,14 @@ def get_skew_kurt_for_subset(df, req_col, bot_q = [.01,.03,.05,.10,.13,.15,.20,.
         sk_lst.append(sk_df) 
 
     for col in req_col: 
+                
+        bot_num_q = []
+        top_num_q = []
+        for i in bot_q:
+            bot_num_q.append(np.quantile(df[col],i))
+        for i in top_q:
+            top_num_q.append(np.quantile(df[col],i))
+        
         skew_lst = []
         kurt_lst = []
         for i in bot_num_q:
