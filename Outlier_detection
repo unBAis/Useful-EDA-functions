@@ -29,7 +29,7 @@ def get_skew_kurt_for_subset(df, req_col, bot_q = [.01,.03,.05,.10,.13,.15,.20,.
             skew_lst.append(skew(df[(df[col] < i ) & (df[col] > j)][col]))
             kurt_lst.append(kurtosis(df[(df[col] < i ) & (df[col] > j)][col]))
         sk_df = pd.DataFrame({'bottom_quantile': bot_q, 'top_quantile': top_q, 'skewness': skew_lst, 'kurtosis' : kurt_lst })
-        # print(bot_q,"\n",top_q,"\n",skew_lst,"\n",kurt_lst)
+        
         sk_df['variable'] = col
         sk_df['tail'] = 'two_tail'
         sk_lst.append(sk_df)
@@ -49,7 +49,7 @@ def get_skew_kurt_for_subset(df, req_col, bot_q = [.01,.03,.05,.10,.13,.15,.20,.
             skew_lst.append(skew(df[(df[col] < i ) ][col]))
             kurt_lst.append(kurtosis(df[(df[col] < i )][col]))
         sk_df = pd.DataFrame({ 'top_quantile': top_q, 'skewness': skew_lst, 'kurtosis' : kurt_lst })
-        # print(bot_q,"\n",top_q,"\n",skew_lst,"\n",kurt_lst)
+       
         sk_df['variable'] = col
         sk_df['tail'] = 'right_tail'
         sk_df['bottom_quantile'] = None
@@ -70,7 +70,7 @@ def get_skew_kurt_for_subset(df, req_col, bot_q = [.01,.03,.05,.10,.13,.15,.20,.
             skew_lst.append(skew(df[(df[col] > i ) ][col]))
             kurt_lst.append(kurtosis(df[(df[col] > i )][col]))
         sk_df = pd.DataFrame({'bottom_quantile': bot_q, 'skewness': skew_lst, 'kurtosis' : kurt_lst })
-        # print(bot_q,"\n",top_q,"\n",skew_lst,"\n",kurt_lst)
+        
         sk_df['variable'] = col
         sk_df['tail'] = 'left_tail'
         sk_df['top_quantile'] = None
