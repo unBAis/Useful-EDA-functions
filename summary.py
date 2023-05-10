@@ -79,7 +79,7 @@ def get_whole_summary(df):
     index_reorder = ['count',  'mean',   'std',   'min',"5%",  "10%",'25%', '50%',   '75%', "90%", "99%", 'max','skewness','kurtosis']
     sumamrized_df = sumamrized_df.reindex(index_reorder)
 
-    return sumamrized_df, numeric_cols
+    return sumamrized_df
 
 
 
