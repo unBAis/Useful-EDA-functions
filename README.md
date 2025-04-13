@@ -6,3 +6,4 @@ This is the compilation of mostly used function by me during my data exploration
 I hope it helps other too.  
    
  
+ 
